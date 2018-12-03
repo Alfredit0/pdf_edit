@@ -21,7 +21,7 @@ import com.itextpdf.text.pdf.PdfStamper;
  * @author unsis informatica
  */
 public class CRTSYSTEM {
-	public static final String SRC = "C:\\CRTSYS\\PLAN_2012.pdf";
+	public static final String SRC = "C:\\CRTSYS\\PLAN_2012_v2.pdf";
     public static final String DEST = "C:\\CRTSYS\\OUTPUT\\PLAN_2012.pdf";
  
     public static void main(String[] args) throws IOException, DocumentException 
@@ -45,13 +45,22 @@ public class CRTSYSTEM {
             //code to set initial variables configuration
             //Setting exam type vars
             
-            for(int i=1;i<3;i++){
-            String name = "CRS"+i;
-            dd = dd.replaceFirst("C1", name );
-            }                    
-            //System.out.println(dd);
-            String name = "C1";
-            dd = dd.replaceFirst("CRS2", name );
+            /*for(int i=1;i<10;i++){
+            String name = "(G1"+i+")Tj";
+            dd = dd.replace("(7.9)Tj", name );
+            }               
+           
+            String name = "Hardware";
+            dd = dd.replace("Hadware", name );
+            
+            name="Enfermer\\355a";
+            dd = dd.replace("Enfemer\\355a", name );
+            
+            name="Psiquiatr\\355a";
+            dd = dd.replace("Psiqui\\341tria", name );
+            //name = "7.7";
+            //dd = dd.replace("P.G", name );
+            //dd = dd.replaceFirst("CRS6", name );
            
             /*name = "C54";
             dd = dd.replace("CR4", name );
@@ -60,8 +69,14 @@ public class CRTSYSTEM {
             name = "C58";
             dd = dd.replace("CR6", name );
          */
-           
+          
+            dd = dd.replaceFirst("EXT1", "EXT.1" );
+            dd = dd.replaceFirst("C.0123456789", "7.6" );
+            dd = dd.replaceFirst("CF1", "8.6" );
+            
+            dd = dd.replace("FCH1", "15/02/2012" );
             stream.setData(dd.getBytes("utf-8"));
+            System.err.println(dd);
         }        
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
         stamper.close();

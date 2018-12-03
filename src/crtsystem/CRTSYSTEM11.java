@@ -23,20 +23,22 @@ import java.util.List;
  */
 public class CRTSYSTEM11 {
  
-    public void editAndGeneratePDF(String pdfName,List<String[]> datesChangeData, 
+    public void editAndGeneratePDF(String pdfAndStudentName,List<String[]> datesChangeData, 
             List<String[]> examsChangeData,
             List<String[]> gradesChangeData) throws IOException, DocumentException 
     {
-        String SRC = "C:\\CRTSYS\\PLAN_2012.pdf";
-        String DEST = "C:\\CRTSYS\\OUTPUT\\"+pdfName.trim().replace(" ", "_")+".pdf";
+        String SRC = "C:\\CRTSYS\\INPUT\\PLAN_2012.pdf";
+        String DEST = "C:\\CRTSYS\\OUTPUT\\"+pdfAndStudentName.trim()+".pdf";
         File file = new File(DEST);
         file.getParentFile().mkdirs();
-        processPDF(SRC, DEST, datesChangeData, examsChangeData, gradesChangeData);
+        processPDF(SRC, DEST, datesChangeData, examsChangeData, gradesChangeData,
+                pdfAndStudentName);
     }
 	
     public static void processPDF(String src, String dest, List<String[]> datesChangeData,
             List<String[]> examsChangeData,
-            List<String[]> gradesChangeData) throws IOException, DocumentException 
+            List<String[]> gradesChangeData,
+            String studentName) throws IOException, DocumentException 
     {
         PdfReader reader = new PdfReader(src);
         PdfDictionary dict = reader.getPageN(1);
@@ -47,7 +49,7 @@ public class CRTSYSTEM11 {
             PRStream stream = (PRStream)object;
             byte[] data = PdfReader.getStreamBytes(stream);
             String dd = new String(data,"utf-8");
-            
+            dd = dd.replaceFirst("ABCDEFGHIJKLMNOPQRSTUVWXYZ", studentName);
             for(String[] row: datesChangeData){
                  dd = dd.replaceFirst(row[0], row[1]);
             }      
@@ -59,6 +61,7 @@ public class CRTSYSTEM11 {
             for(String[] row: gradesChangeData){
                 dd = dd.replaceFirst(row[0], row[1]);                
             }
+            
             stream.setData(dd.getBytes("utf-8"));
         }        
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));

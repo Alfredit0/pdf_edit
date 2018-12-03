@@ -19,120 +19,135 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.poi.hssf.util.CellReference;
 
-public class ExcelReader {
-    public static final String SAMPLE_XLSX_FILE_PATH = "C:\\CRTSYS\\KARDEX_1003A.xlsx";
+public class ExcelReader {      
+    /*public static void main(String[] args) throws IOException, InvalidFormatException, DocumentException {
+        String testFilePath = "C:\\CRTSYS\\INPUT\\KARDEX_1003A_gen_12.xlsx";
+        String result;
+        result = readAndGenerate(testFilePath);
+        System.err.println(result);
+    }*/
     
-    public static void main(String[] args) throws IOException, InvalidFormatException, DocumentException {
-
+    public String readAndGenerate(String filePath) throws IOException, InvalidFormatException, DocumentException {
+        String SAMPLE_XLSX_FILE_PATH = filePath;
+        StringBuilder builder = new StringBuilder();
         // Creating a Workbook from an Excel file (.xls or .xlsx)
         Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
 
         // Retrieving the number of sheets in the Workbook
-        System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+        builder.append("Workbook has ").append(workbook.getNumberOfSheets()).append(" Sheets :");
+        builder.append("\n");
 
         /*
            =============================================================
-           Iterating over all the sheets in the workbook (Multiple ways)
+           Iterating over all the sheets in the workbook
            =============================================================
         */
 
         // Retrieving Sheets using for-each loop
         for(Sheet sheet: workbook) {
-            System.out.println("=> " + sheet.getSheetName());
-        
+            builder.append("\nPAGE => ").append(sheet.getSheetName());
+            builder.append("\n");
+            // Getting the Sheet at index zero
+            //Sheet sheet = workbook.getSheetAt(0);
 
-        // Getting the Sheet at index zero
-        //Sheet sheet = workbook.getSheetAt(0);
+            //Getting Full Name
+            String name="";        
+            CellReference ref;
+            Row r;
 
-        //Getting Full Name
-        String name="";        
-        CellReference ref;
-        Row r;
-        
-        //Getting first name
-        ref= new CellReference("K7");
-        r = sheet.getRow(ref.getRow());
-        if (r != null) {
-           Cell c = r.getCell(ref.getCol());
-           name=name+" "+c.getStringCellValue();
-        } 
-        //Getting second name
-        ref= new CellReference("D7");
-        r = sheet.getRow(ref.getRow());
-        if (r != null) {
-           Cell c = r.getCell(ref.getCol());
-           name=name+" "+c.getStringCellValue();
-        }      
-        
-        ref= new CellReference("E7");
-        r = sheet.getRow(ref.getRow());
-        if (r != null) {
-           Cell c = r.getCell(ref.getCol());
-           name=name+" "+c.getStringCellValue();
-        } 
-        
-        System.out.println("NOMBRE: "+name);
-
-        //Getting dates
-        
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");    
-        List<String[]> finalDates = new ArrayList<String[]>();        
-        for(String[] row:MatchData.DATES_MATCH_DATA){
-            String dateAux[]={"",""};
-            dateAux[0]=row[0];
-            ref= new CellReference(row[1]);
+            //Getting first name
+            ref= new CellReference("K7");
             r = sheet.getRow(ref.getRow());
             if (r != null) {
                Cell c = r.getCell(ref.getCol());
-               dateAux[1]=format.format(c.getDateCellValue());
-            }
-            finalDates.add(dateAux);
-        }
-        
-        //Getting Exams Type
-        List<String[]> finalExams = new ArrayList<String[]>();        
-        for(String[] row:MatchData.EXAMS_MATCH_DATA){
-            String examAux[]={"",""};
-            examAux[0]=row[0];
-            ref= new CellReference(row[1]);
+               name=name+" "+c.getStringCellValue();
+            } 
+            //Getting second name
+            ref= new CellReference("D7");
             r = sheet.getRow(ref.getRow());
             if (r != null) {
                Cell c = r.getCell(ref.getCol());
-               examAux[1]=c.getStringCellValue().toUpperCase().replace(" ","");
-            }
-            finalExams.add(examAux);
-        }        
-        
-        //Getting Grades
-        List<String[]> finalGrades = new ArrayList<String[]>();
-        for(String[] row:MatchData.GRADES_MATCH_DATA){
-            String gradeR[]={"",""};
-            gradeR[0]=row[0];
-            ref= new CellReference(row[2]);
+               name=name+" "+c.getStringCellValue();
+            }      
+
+            ref= new CellReference("E7");
             r = sheet.getRow(ref.getRow());
             if (r != null) {
                Cell c = r.getCell(ref.getCol());
-               if(c.getNumericCellValue()!=0){
-                gradeR[1]=""+c.getNumericCellValue();
-               }else{
+               name=name+" "+c.getStringCellValue();
+            } 
+
+            builder.append("STUDENT NAME: ").append(name);
+            builder.append("\n");
+            if(!"".equals(name)){
+            //Getting dates
+            try{      
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");    
+                List<String[]> finalDates = new ArrayList<String[]>();        
+                for(String[] row:MatchData.DATES_MATCH_DATA){
+                    String dateAux[]={"",""};
+                    dateAux[0]=row[0];
                     ref= new CellReference(row[1]);
                     r = sheet.getRow(ref.getRow());
                     if (r != null) {
-                        c = r.getCell(ref.getCol());
-                        gradeR[1]=""+c.getNumericCellValue();
+                       Cell c = r.getCell(ref.getCol());
+                       dateAux[1]=format.format(c.getDateCellValue());
                     }
+                    finalDates.add(dateAux);
                 }
 
+                //Getting Exams Type
+                List<String[]> finalExams = new ArrayList<String[]>();        
+                for(String[] row:MatchData.EXAMS_MATCH_DATA){
+                    String examAux[]={"",""};
+                    examAux[0]=row[0];
+                    ref= new CellReference(row[1]);
+                    r = sheet.getRow(ref.getRow());
+                    if (r != null) {
+                       Cell c = r.getCell(ref.getCol());
+                       examAux[1]=c.getStringCellValue().toUpperCase().replace(" ","");
+                    }
+                    finalExams.add(examAux);
+                }        
+
+                //Getting Grades
+                List<String[]> finalGrades = new ArrayList<String[]>();
+                for(String[] row:MatchData.GRADES_MATCH_DATA){
+                    String gradeR[]={"",""};
+                    gradeR[0]=row[0];
+                    ref= new CellReference(row[2]);
+                    r = sheet.getRow(ref.getRow());
+                    if (r != null) {
+                       Cell c = r.getCell(ref.getCol());
+                       if(c.getNumericCellValue()!=0){
+                        gradeR[1]=""+c.getNumericCellValue();
+                       }else{
+                            ref= new CellReference(row[1]);
+                            r = sheet.getRow(ref.getRow());
+                            if (r != null) {
+                                c = r.getCell(ref.getCol());
+                                gradeR[1]=""+c.getNumericCellValue();
+                            }
+                        }
+
+                    }
+                    finalGrades.add(gradeR);
+                }
+                CRTSYSTEM11 pdfCreator = new CRTSYSTEM11();
+                pdfCreator.editAndGeneratePDF(name, finalDates, finalExams, finalGrades);
+                builder.append("SUCCESSFULLY GENERATED FILE: ").append(name);
+                builder.append("\n");
+            }catch(Exception e){
+                builder.append("INCOMPLETE STUDENTE DATA: ").append(name);
+                builder.append("\n");
             }
-            finalGrades.add(gradeR);
-        }
-        /*finalExams.forEach((row) -> {
-            System.out.println(row[0]+" :: "+row[1]);
-        });*/
-        CRTSYSTEM11 pdfCreator = new CRTSYSTEM11();
-        pdfCreator.editAndGeneratePDF(name, finalDates, finalExams, finalGrades);
+            }else{
+            builder.append("NULL NAME");
+            builder.append("\n");
+            }
         }
         // Closing the workbook
         workbook.close();
+        return builder.toString();
     }
 }
