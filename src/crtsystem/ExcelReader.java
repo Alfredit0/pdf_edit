@@ -26,7 +26,9 @@ public class ExcelReader {
         result = readAndGenerate(testFilePath);
         System.err.println(result);
     }*/
-    
+    private int coutWorkBookPages;
+    private int processPorcent;
+    private String result="";
     public String readAndGenerate(String filePath) throws IOException, InvalidFormatException, DocumentException {
         String SAMPLE_XLSX_FILE_PATH = filePath;
         StringBuilder builder = new StringBuilder();
@@ -36,20 +38,21 @@ public class ExcelReader {
         // Retrieving the number of sheets in the Workbook
         builder.append("Workbook has ").append(workbook.getNumberOfSheets()).append(" Sheets :");
         builder.append("\n");
-
+        setCoutWorkBookPages(workbook.getNumberOfSheets());
         /*
            =============================================================
            Iterating over all the sheets in the workbook
            =============================================================
         */
-
+        int i=0;
         // Retrieving Sheets using for-each loop
         for(Sheet sheet: workbook) {
             builder.append("\nPAGE => ").append(sheet.getSheetName());
             builder.append("\n");
             // Getting the Sheet at index zero
             //Sheet sheet = workbook.getSheetAt(0);
-
+            i=+1;
+            setProcessPorcent(i);
             //Getting Full Name
             String name="";        
             CellReference ref;
@@ -138,7 +141,7 @@ public class ExcelReader {
                 builder.append("SUCCESSFULLY GENERATED FILE: ").append(name);
                 builder.append("\n");
             }catch(Exception e){
-                builder.append("INCOMPLETE STUDENTE DATA: ").append(name);
+                builder.append("INCOMPLETE STUDENT DATA: ").append(name);
                 builder.append("\n");
             }
             }else{
@@ -148,6 +151,33 @@ public class ExcelReader {
         }
         // Closing the workbook
         workbook.close();
+        setResult(builder.toString());
         return builder.toString();
     }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public int getCoutWorkBookPages() {
+        return coutWorkBookPages;
+    }
+
+    public void setCoutWorkBookPages(int coutWorkBookPages) {
+        this.coutWorkBookPages = coutWorkBookPages;
+    }
+
+    public int getProcessPorcent() {
+        return processPorcent;
+    }
+
+    public void setProcessPorcent(int processPorcent) {
+        this.processPorcent = processPorcent;
+    }
+    
+    
 }

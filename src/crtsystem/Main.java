@@ -6,14 +6,22 @@
 package crtsystem;
 
 import com.itextpdf.text.DocumentException;
+import java.awt.Cursor;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
@@ -21,9 +29,54 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  *
  * @author unsis informatica
  */
-public class Main extends javax.swing.JFrame {
+public class Main extends javax.swing.JFrame 
+    implements ActionListener, 
+    PropertyChangeListener{
     String filePath="";
+    private Task task;
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    class Task extends SwingWorker<Void, Void> {
+        /*
+         * Main task. Executed in background thread.
+         */
+        ExcelReader pdfGenerator;
+        @Override
+        public Void doInBackground() throws IOException, InvalidFormatException, DocumentException {
+            Random random = new Random();
+             pdfGenerator= new ExcelReader();
+            int progress = 0;
+            //Initialize progress property.
+            setProgress(0);
+            pdfGenerator.readAndGenerate(getFilePath());
+            while (progress < 100) {
+                //Sleep for up to one second.
+                try {
+                    Thread.sleep(random.nextInt(1000));
+                } catch (InterruptedException ignore) {}
+                //Make random progress.
+                progress += random.nextInt(10);
+                setProgress(Math.min(progress, 100));
+            }
+            return null;
+        }
+
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+            Toolkit.getDefaultToolkit().beep();
+            btnGenerateFiles.setEnabled(true);
+            setCursor(null); //turn off the wait cursor
+            txtProcessResult.append(pdfGenerator.getResult());
+            ImageIcon loadingImg = new ImageIcon("Completed_icon.gif");
+            lblStatus.setIcon(loadingImg);
+        }
+    }
     /**
      * Creates new form NewJFrame
      */
@@ -55,6 +108,7 @@ public class Main extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtProcessResult = new javax.swing.JTextArea();
+        progressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GENERADOR DE CERTIFICADOS - UNSIS");
@@ -133,15 +187,14 @@ public class Main extends javax.swing.JFrame {
                             .addComponent(jLabel1)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnOpenFile)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jScrollPane2))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnGenerateFiles)
-                        .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnOpenFile)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2)
+                    .addComponent(btnGenerateFiles)
+                    .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -168,9 +221,11 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(btnGenerateFiles)
-                        .addGap(18, 18, 18)
+                        .addGap(19, 19, 19)
                         .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(43, 43, 43)
+                        .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -241,26 +296,28 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_comboPlanActionPerformed
 
     private void btnGenerateFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateFilesActionPerformed
-            lblStatus.setText("Generando");
+            txtProcessResult.setText("");
             ImageIcon loadingImg = new ImageIcon("Loading_icon.gif");
-            lblStatus.setIcon(loadingImg);
-            //new GoodWorkerThread(txtProcessResult).start();
-            /*
-            ExcelReader myGenerator = new ExcelReader();
-        try {
-            String processResult = myGenerator.readAndGenerate("C:\\CRTSYS\\INPUT\\KARDEX_1003A_gen_12.xlsx");
-            txtProcessResult.setText(processResult);
-            //lblStatus.setIcon(null);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidFormatException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DocumentException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
+            lblStatus.setIcon(loadingImg); 
+            btnGenerateFiles.setEnabled(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //Instances of javax.swing.SwingWorker are not reusuable, so
+            //we create new instances as needed.
+            task = new Task();
+            task.addPropertyChangeListener(this);
+            task.execute();
     }//GEN-LAST:event_btnGenerateFilesActionPerformed
-
+    /**
+     * Invoked when task's progress property changes.
+     */
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("progress" == evt.getPropertyName()) {
+            int progress = (Integer) evt.getNewValue();
+            progressBar.setValue(progress);
+            txtProcessResult.append(String.format(
+                    "Completed %d%% of task.\n", task.getProgress()));
+        } 
+    }
     /**
      * @param args the command line arguments
      */
@@ -318,6 +375,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblImage;
     private javax.swing.JLabel lblStatus;
+    private javax.swing.JProgressBar progressBar;
     private javax.swing.JTextArea txtProcessResult;
     // End of variables declaration//GEN-END:variables
 }
