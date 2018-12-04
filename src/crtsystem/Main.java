@@ -75,6 +75,7 @@ public class Main extends javax.swing.JFrame
             txtProcessResult.append(pdfGenerator.getResult());
             ImageIcon loadingImg = new ImageIcon("Completed_icon.gif");
             lblStatus.setIcon(loadingImg);
+            enableMainControls();
         }
     }
     /**
@@ -109,6 +110,7 @@ public class Main extends javax.swing.JFrame
         jScrollPane3 = new javax.swing.JScrollPane();
         txtProcessResult = new javax.swing.JTextArea();
         progressBar = new javax.swing.JProgressBar();
+        lblPath = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GENERADOR DE CERTIFICADOS - UNSIS");
@@ -162,6 +164,7 @@ public class Main extends javax.swing.JFrame
         jScrollPane2.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane2.setForeground(new java.awt.Color(255, 255, 255));
 
+        txtProcessResult.setEditable(false);
         txtProcessResult.setColumns(20);
         txtProcessResult.setRows(5);
         jScrollPane3.setViewportView(txtProcessResult);
@@ -189,7 +192,10 @@ public class Main extends javax.swing.JFrame
                         .addGap(18, 18, 18)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnOpenFile)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2)
                     .addComponent(btnGenerateFiles)
@@ -209,24 +215,24 @@ public class Main extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnOpenFile))
+                    .addComponent(btnOpenFile)
+                    .addComponent(lblPath))
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel5))
+                .addGap(14, 14, 14)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(32, 32, 32)
                         .addComponent(btnGenerateFiles)
-                        .addGap(19, 19, 19)
+                        .addGap(18, 18, 18)
                         .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(43, 43, 43)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -235,7 +241,7 @@ public class Main extends javax.swing.JFrame
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
@@ -259,19 +265,30 @@ public class Main extends javax.swing.JFrame
 
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {            
             setFilePath(chooser.getSelectedFile().toString());
-            System.out.println(getFilePath());
+            lblPath.setText(getFilePath());
         } else {
             System.out.println("No Selection ");
             setFilePath("");
+            lblPath.setText("");
         }   
         if(isPlanAndFileNotNull())
             btnGenerateFiles.setEnabled(true);
         else
             btnGenerateFiles.setEnabled(false);
     }//GEN-LAST:event_btnOpenFileActionPerformed
-    public boolean isPlanAndFileNotNull(){
-        if(comboPlan.getSelectedIndex()!=0&&"".equals(getFilePath()))return true;
+    public boolean isPlanAndFileNotNull(){      
+        if(comboPlan.getSelectedIndex()!=0&&!"".equals(getFilePath()))return true;
             else return false;
+    }
+    public void disableMainControls(){
+        comboPlan.setEnabled(false);
+        btnOpenFile.setEnabled(false);
+        btnGenerateFiles.setEnabled(false);
+    }
+    public void enableMainControls(){
+        comboPlan.setEnabled(true);
+        btnOpenFile.setEnabled(true);
+        btnGenerateFiles.setEnabled(true);    
     }
     private void comboPlanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPlanActionPerformed
        BufferedImage img;
@@ -306,6 +323,7 @@ public class Main extends javax.swing.JFrame
             task = new Task();
             task.addPropertyChangeListener(this);
             task.execute();
+            disableMainControls();
     }//GEN-LAST:event_btnGenerateFilesActionPerformed
     /**
      * Invoked when task's progress property changes.
@@ -352,6 +370,7 @@ public class Main extends javax.swing.JFrame
                 new Main().setVisible(true);
             }
         });
+        
     }
     public String getFilePath() {
         return filePath;
@@ -374,6 +393,7 @@ public class Main extends javax.swing.JFrame
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblImage;
+    private javax.swing.JLabel lblPath;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JTextArea txtProcessResult;

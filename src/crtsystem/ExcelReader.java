@@ -129,7 +129,12 @@ public class ExcelReader {
                             r = sheet.getRow(ref.getRow());
                             if (r != null) {
                                 c = r.getCell(ref.getCol());
+                                if(c.getNumericCellValue()!=0){
                                 gradeR[1]=""+c.getNumericCellValue();
+                                }else{
+                                    builder.append("INCOMPLETE STUDENT DATA: ").append(name);
+                                    break;
+                                }
                             }
                         }
 
