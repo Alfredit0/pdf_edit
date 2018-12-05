@@ -83,6 +83,7 @@ public class ExcelReader {
             builder.append("STUDENT NAME: ").append(name);
             builder.append("\n");
             if(!"".equals(name)){
+            int match_errors = 0;
             //Getting dates
             try{      
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");    
@@ -131,9 +132,8 @@ public class ExcelReader {
                                 c = r.getCell(ref.getCol());
                                 if(c.getNumericCellValue()!=0){
                                 gradeR[1]=""+c.getNumericCellValue();
-                                }else{
-                                    builder.append("INCOMPLETE STUDENT DATA: ").append(name);
-                                    break;
+                                }else{                                    
+                                    match_errors = match_errors+1;
                                 }
                             }
                         }
@@ -141,10 +141,15 @@ public class ExcelReader {
                     }
                     finalGrades.add(gradeR);
                 }
+                if(match_errors==0){                
                 CRTSYSTEM11 pdfCreator = new CRTSYSTEM11();
                 pdfCreator.editAndGeneratePDF(name, finalDates, finalExams, finalGrades);
                 builder.append("SUCCESSFULLY GENERATED FILE: ").append(name);
                 builder.append("\n");
+                }else{
+                    builder.append("INCOMPLETE STUDENT DATA: GRADES ARE NOT DEFINE: ").append(name);
+                    builder.append("\n");
+                }
             }catch(Exception e){
                 builder.append("INCOMPLETE STUDENT DATA: ").append(name);
                 builder.append("\n");
