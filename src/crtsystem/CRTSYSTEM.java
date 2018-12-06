@@ -21,8 +21,8 @@ import com.itextpdf.text.pdf.PdfStamper;
  * @author unsis informatica
  */
 public class CRTSYSTEM {
-	public static final String SRC = "C:\\CRTSYS\\PLAN_2012_v2.pdf";
-    public static final String DEST = "C:\\CRTSYS\\OUTPUT\\PLAN_2012.pdf";
+	public static final String SRC = "C:\\CRTSYS\\INPUT\\PLAN_LE_2012.pdf";
+    public static final String DEST = "C:\\CRTSYS\\PLAN_2012.pdf";
  
     public static void main(String[] args) throws IOException, DocumentException 
     {
@@ -34,7 +34,7 @@ public class CRTSYSTEM {
     public static void processPDF(String src, String dest) throws IOException, DocumentException 
     {
         PdfReader reader = new PdfReader(src);
-        PdfDictionary dict = reader.getPageN(1);
+        PdfDictionary dict = reader.getPageN(2);
         PdfObject object = dict.getDirectObject(PdfName.CONTENTS);
         
         if (object instanceof PRStream) 
@@ -70,11 +70,11 @@ public class CRTSYSTEM {
             dd = dd.replace("CR6", name );
          */
           
-            dd = dd.replaceFirst("EXT1", "EXT.1" );
-            dd = dd.replaceFirst("C.0123456789", "7.6" );
-            dd = dd.replaceFirst("CF1", "8.6" );
+            dd = dd.replaceFirst("D1", "31" );
+            dd = dd.replaceFirst("D2", "agosto" );
+            dd = dd.replaceFirst("D3", "2017" );            
+            dd = dd.replaceFirst("D4", "31/12/2013" );
             
-            dd = dd.replace("FCH1", "15/02/2012" );
             stream.setData(dd.getBytes("utf-8"));
             System.err.println(dd);
         }        
