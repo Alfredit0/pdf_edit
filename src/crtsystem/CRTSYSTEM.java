@@ -15,6 +15,7 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import java.util.Formatter;
 
 /**
  *
@@ -74,6 +75,11 @@ public class CRTSYSTEM {
             dd = dd.replaceFirst("D2", "agosto" );
             dd = dd.replaceFirst("D3", "2017" );            
             dd = dd.replaceFirst("D4", "31/12/2013" );
+            int folioNumber = 875;
+            Formatter fmt = new Formatter();
+            String auxFolio = "C";
+            auxFolio = auxFolio + fmt.format("%04d",folioNumber);
+            dd = dd.replaceFirst("FN0123456789", auxFolio );
             
             stream.setData(dd.getBytes("utf-8"));
             System.err.println(dd);

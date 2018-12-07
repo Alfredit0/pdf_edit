@@ -83,7 +83,13 @@ public class CRTSYSTEM11 {
             String dd = new String(data,"utf-8");
             
             dd = dd.replaceFirst("D4", MatchData.DATEDDMMYYYY );
-            System.err.println(MatchData.DATEDDMMYYYY);
+            
+            //Here get last object from the list where folio number is saved
+            String auxFolio[];
+            
+            auxFolio = gradesChangeData.get(gradesChangeData.size()-1);
+            
+            dd = dd.replaceFirst(auxFolio[0], auxFolio[1]);
             stream.setData(dd.getBytes("utf-8"));
         }      
         

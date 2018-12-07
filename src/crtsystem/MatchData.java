@@ -224,4 +224,6 @@ public final class MatchData {
         public static  String DATEDAY = "dd";        
         public static  String DATEMONTH = "MMMM";
         public static  String DATEYEAR = "yyyy";
+        
+        public static  int FOLIO_NUMBER = 0000;
 }

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 import org.apache.poi.hssf.util.CellReference;
 
@@ -51,8 +52,8 @@ public class ExcelReader {
             builder.append("\n");
             // Getting the Sheet at index zero
             //Sheet sheet = workbook.getSheetAt(0);
-            i=+1;
-            setProcessPorcent(i);
+            i=i+1;
+            
             //Getting Full Name
             String name="";        
             CellReference ref;
@@ -140,6 +141,17 @@ public class ExcelReader {
 
                     }
                     finalGrades.add(gradeR);
+                    
+                    String auxFolio []= {"", ""};
+                    auxFolio[0]="FN0123456789";
+                    int folioNumber = MatchData.FOLIO_NUMBER+i;
+                    Formatter fmt = new Formatter();
+                    String strFinalFolioNumber = "C";
+                    strFinalFolioNumber = strFinalFolioNumber + fmt.format("%04d",folioNumber);
+                    auxFolio[1]= strFinalFolioNumber;
+                    //Improving Folio Number to replace
+                    finalGrades.add(auxFolio);
+                    builder.append("\nFOLIO => ").append(auxFolio[1]);
                 }
                 if(match_errors==0){                
                 CRTSYSTEM11 pdfCreator = new CRTSYSTEM11();
