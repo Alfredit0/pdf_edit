@@ -37,7 +37,7 @@ public class ExcelReader {
         Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
 
         // Retrieving the number of sheets in the Workbook
-        builder.append("Workbook has ").append(workbook.getNumberOfSheets()).append(" Sheets :");
+        builder.append("EL LIBRO TIENE ").append(workbook.getNumberOfSheets()).append(" HOJAS :");
         builder.append("\n");
         setCoutWorkBookPages(workbook.getNumberOfSheets());
         /*
@@ -48,12 +48,11 @@ public class ExcelReader {
         int i=0;
         // Retrieving Sheets using for-each loop
         for(Sheet sheet: workbook) {
-            builder.append("\nPAGE => ").append(sheet.getSheetName());
+            builder.append("\nHOJA => ").append(sheet.getSheetName());
             builder.append("\n");
             // Getting the Sheet at index zero
             //Sheet sheet = workbook.getSheetAt(0);
-            i=i+1;
-            
+                        
             //Getting Full Name
             String name="";        
             CellReference ref;
@@ -81,7 +80,7 @@ public class ExcelReader {
                name=name+" "+c.getStringCellValue();
             } 
 
-            builder.append("STUDENT NAME: ").append(name);
+            builder.append("NOMBRE DEL ALUMNO: ").append(name);
             builder.append("\n");
             if(!"".equals(name)){
             int match_errors = 0;
@@ -140,34 +139,36 @@ public class ExcelReader {
                         }
 
                     }
-                    finalGrades.add(gradeR);
-                    
-                    String auxFolio []= {"", ""};
-                    auxFolio[0]="FN0123456789";
-                    int folioNumber = MatchData.FOLIO_NUMBER+i;
-                    Formatter fmt = new Formatter();
-                    String strFinalFolioNumber = "C";
-                    strFinalFolioNumber = strFinalFolioNumber + fmt.format("%04d",folioNumber);
-                    auxFolio[1]= strFinalFolioNumber;
-                    //Improving Folio Number to replace
-                    finalGrades.add(auxFolio);
-                    builder.append("\nFOLIO => ").append(auxFolio[1]);
+                    finalGrades.add(gradeR);                    
                 }
-                if(match_errors==0){                
+                if(match_errors==0){
+                i=i+1;
+                
+                String auxFolio []= {"", ""};
+                auxFolio[0]="FN0123456789";
+                int folioNumber = MatchData.FOLIO_NUMBER+i;
+                Formatter fmt = new Formatter();
+                String strFinalFolioNumber = "C";
+                strFinalFolioNumber = strFinalFolioNumber + fmt.format("%04d",folioNumber);
+                auxFolio[1]= strFinalFolioNumber;
+                //Improving Folio Number to replace
+                finalGrades.add(auxFolio);
+                builder.append("FOLIO => ").append(auxFolio[1]);
+                                                    
                 CRTSYSTEM11 pdfCreator = new CRTSYSTEM11();
                 pdfCreator.editAndGeneratePDF(name, finalDates, finalExams, finalGrades);
-                builder.append("SUCCESSFULLY GENERATED FILE: ").append(name);
+                builder.append("\nARCHIVO GENERADO CORRECTAMENTE: ").append(name);
                 builder.append("\n");
                 }else{
-                    builder.append("INCOMPLETE STUDENT DATA: GRADES ARE NOT DEFINE: ").append(name);
+                    builder.append("DATOS DEL ALUMNO INCOMPLETOS: ALGUNOS VALORES NO DEFINIDOS: ").append(name);
                     builder.append("\n");
                 }
             }catch(Exception e){
-                builder.append("INCOMPLETE STUDENT DATA: ").append(name);
+                builder.append("NO SE GENERO ARCHIVO - DATOS INCOMPLETOS: ").append(name);
                 builder.append("\n");
             }
             }else{
-            builder.append("NULL NAME");
+            builder.append("SIN NOMBRE DE HOJA");
             builder.append("\n");
             }
         }

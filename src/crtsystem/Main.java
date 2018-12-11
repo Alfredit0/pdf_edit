@@ -265,7 +265,7 @@ public class Main extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(btnOpenFile)
                                 .addComponent(lblPath))))
                     .addComponent(comboPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -325,8 +325,7 @@ public class Main extends javax.swing.JFrame
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {            
             setFilePath(chooser.getSelectedFile().toString());
             lblPath.setText(getFilePath());
-        } else {
-            System.out.println("No Selection ");
+        } else {            
             setFilePath("");
             lblPath.setText("");
         }   
@@ -344,12 +343,14 @@ public class Main extends javax.swing.JFrame
         btnOpenFile.setEnabled(false);
         btnGenerateFiles.setEnabled(false);
         txtFolioNumber.setEnabled(false);
+        jDateChooser1.setEnabled(false);
     }
     public void enableMainControls(){
         comboPlan.setEnabled(true);
         btnOpenFile.setEnabled(true);
         btnGenerateFiles.setEnabled(true);    
         txtFolioNumber.setEnabled(true);
+        jDateChooser1.setEnabled(true);
     }
     private void comboPlanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPlanActionPerformed
        BufferedImage img;
@@ -415,9 +416,7 @@ public class Main extends javax.swing.JFrame
     }//GEN-LAST:event_jDateChooser1PropertyChange
 
     private void txtFolioNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFolioNumberFocusLost
-        System.err.println(txtFolioNumber.getText());
-        setFolioNumber(Integer.parseInt(txtFolioNumber.getText()));
-        System.err.println(getFolioNumber());
+        setFolioNumber(Integer.parseInt(txtFolioNumber.getText()));        
     }//GEN-LAST:event_txtFolioNumberFocusLost
     /**
      * Invoked when task's progress property changes.
@@ -427,7 +426,7 @@ public class Main extends javax.swing.JFrame
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);
             txtProcessResult.append(String.format(
-                    "Completed %d%% of task.\n", task.getProgress()));
+                    "Porcentaje completado %d%%\n", task.getProgress()));
         } 
     }
     /**
