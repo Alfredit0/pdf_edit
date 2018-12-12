@@ -17,16 +17,13 @@ import java.util.Scanner;
  * @author unsis informatica
  */
 public class CsvFileReader {
-    public static void main(String[] args) {
-        String csvPathTest="/CRTSYS/CONFIG/GRADES_PLAN_LE_2012.csv";
-    }
-    public String[][] getCsvContent (String csvPath){
-        String [][] result = {};
+    public static List<String[]> getCsvContent (String csvPath){
+      
                         
         File file= new File(csvPath);
 
         // this gives you a 2-dimensional array of strings
-        List<List<String>> lines = new ArrayList<>();
+        List<String[]> lines = new ArrayList<>();
         Scanner inputStream;
 
         try{
@@ -35,8 +32,8 @@ public class CsvFileReader {
             while(inputStream.hasNext()){
                 String line= inputStream.next();
                 String[] values = line.split(",");
-                // this adds the currently parsed line to the 2-dimensional string array
-                lines.add(Arrays.asList(values));
+                // this adds the currently parsed line to the string array
+                lines.add(values);
             }
 
             inputStream.close();
@@ -44,7 +41,6 @@ public class CsvFileReader {
             e.printStackTrace();
         }
         
-        
-        return result;
+        return lines;
     }
 }

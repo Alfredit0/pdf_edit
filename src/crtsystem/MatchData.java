@@ -5,12 +5,15 @@
  */
 package crtsystem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Impresion Fast
  */
 public final class MatchData {
-        public static final  String[][] DATES_MATCH_DATA = new String[][]{
+        /*public static final  String[][] DATES_MATCH_DATA = new String[][]{
             {"F/CH1","N20"},
             {"F/CH2","N21"},
             {"F/CH3","N22"},
@@ -219,11 +222,49 @@ public final class MatchData {
         {"CF58","K119", "M119"},
         
         {"C.0123456789","O122", "O123"}         
-    };
+    };*/
         public static  String DATEDDMMYYYY = "dd/MM/yyyy";
         public static  String DATEDAY = "dd";        
         public static  String DATEMONTH = "MMMM";
         public static  String DATEYEAR = "yyyy";
         
         public static  int FOLIO_NUMBER = 0000;
+        
+        public static String ACTUAL_PLAN="";
+        
+        public static List<String[]> UNIVERSITY_PLANS = new ArrayList<String[]>();
+        
+        public static List<String[]> DATES_MATCH_DATA;
+        
+        public static List<String[]> EXAMS_MATCH_DATA;
+        
+        public static List<String[]> GRADES_MATCH_DATA;
+        
+
+        public static List<String[]> getUNIVERSITY_PLANS() {
+            return CsvFileReader.getCsvContent("/CRTSYS/CONFIG/PLANS.csv");            
+        }
+        
+        public static boolean setPlanDataInVars(){
+            if("".equals(ACTUAL_PLAN)||null==ACTUAL_PLAN)
+                return false;
+            else{
+                DATES_MATCH_DATA = new ArrayList<String[]>();
+        
+                EXAMS_MATCH_DATA = new ArrayList<String[]>();
+        
+                GRADES_MATCH_DATA = new ArrayList<String[]>();
+                
+                DATES_MATCH_DATA = CsvFileReader.getCsvContent("/CRTSYS/CONFIG/DATES_"+ACTUAL_PLAN+".csv");
+                
+                EXAMS_MATCH_DATA = CsvFileReader.getCsvContent("/CRTSYS/CONFIG/EXAMS_"+ACTUAL_PLAN+".csv");
+                
+                GRADES_MATCH_DATA= CsvFileReader.getCsvContent("/CRTSYS/CONFIG/GRADES_"+ACTUAL_PLAN+".csv");
+                
+                if(DATES_MATCH_DATA.isEmpty()||EXAMS_MATCH_DATA.isEmpty()||GRADES_MATCH_DATA.isEmpty())
+                    return false;
+                
+            }
+            return true;
+        }
 }

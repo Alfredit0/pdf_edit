@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,6 +92,9 @@ public class Main extends javax.swing.JFrame
      */
     public Main() {
         initComponents();
+        for(String[] row: MatchData.getUNIVERSITY_PLANS()){
+        comboPlan.addItem(row[0]);
+        }
     }
 
     /**
@@ -140,7 +142,7 @@ public class Main extends javax.swing.JFrame
 
         jLabel3.setText("Vista Previa");
 
-        comboPlan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione por favor", "Lic. Enfermería 2012", "Lic. Nutrición 2012" }));
+        comboPlan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione por favor" }));
         comboPlan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboPlanActionPerformed(evt);
@@ -355,15 +357,27 @@ public class Main extends javax.swing.JFrame
     private void comboPlanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPlanActionPerformed
        BufferedImage img;
        if(comboPlan.getSelectedIndex()!=0){
-        try {
-            img = ImageIO.read(new File("PLANES\\PLAN_LE_2012.jpg"));
-            ImageIcon icon=new ImageIcon(img);
-            lblImage.setText("");
-            lblImage.setIcon(icon);
+            MatchData.ACTUAL_PLAN = comboPlan.getSelectedItem().toString();
+            try {           
 
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                img = ImageIO.read(new File("/CRTSYS/CONFIG/COVERS/"+MatchData.ACTUAL_PLAN +".jpg"));
+                ImageIcon icon=new ImageIcon(img);
+                lblImage.setText("");
+                lblImage.setIcon(icon);
+
+            } catch (IOException ex) {
+                lblImage.setIcon(null);
+                lblImage.setText("Este Plan no se ha configurado correctamente");
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }        
+            if(!MatchData.setPlanDataInVars()){                
+                lblImage.setIcon(null);
+                lblImage.setText("Este Plan No se ha configurado correctamente");
+                disableMainControls();
+                comboPlan.setEnabled(true);
+            }else{
+            enableMainControls();
+            }
        }else{
            lblImage.setIcon(null);
            lblImage.setText("Seleccione un Plan de Estudios");
