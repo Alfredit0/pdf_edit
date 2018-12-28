@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -38,6 +39,7 @@ public class CsvFileReader {
 
             inputStream.close();
         }catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la configuración", 0);
             e.printStackTrace();
         }
         

@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.apache.poi.hssf.util.CellReference;
 
 public class ExcelReader {      
@@ -84,6 +85,8 @@ public class ExcelReader {
             builder.append("\n");
             if(!"".equals(name)){
             int match_errors = 0;
+            int error_follower = 0;
+            String processFollower = "";
             //Getting dates
             try{      
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");    
@@ -94,12 +97,15 @@ public class ExcelReader {
                     ref= new CellReference(row[1]);
                     r = sheet.getRow(ref.getRow());
                     if (r != null) {
-                       Cell c = r.getCell(ref.getCol());
-                       dateAux[1]=format.format(c.getDateCellValue());
+                        Cell c = r.getCell(ref.getCol());
+                        processFollower = "VAR: "+ row[0]+" REF: "+row[1];
+                        dateAux[1]=format.format(c.getDateCellValue());
                     }
                     finalDates.add(dateAux);
                 }
-
+                
+                error_follower++;
+                
                 //Getting Exams Type
                 List<String[]> finalExams = new ArrayList<String[]>();        
                 for(String[] row:MatchData.EXAMS_MATCH_DATA){
@@ -109,11 +115,14 @@ public class ExcelReader {
                     r = sheet.getRow(ref.getRow());
                     if (r != null) {
                        Cell c = r.getCell(ref.getCol());
+                       processFollower = "VAR: "+ row[0]+" REF: "+row[1];
                        examAux[1]=c.getStringCellValue().toUpperCase().replace(" ","");
                     }
                     finalExams.add(examAux);
                 }        
-
+                
+                error_follower++;
+                
                 //Getting Grades
                 List<String[]> finalGrades = new ArrayList<String[]>();
                 for(String[] row:MatchData.GRADES_MATCH_DATA){
@@ -123,6 +132,7 @@ public class ExcelReader {
                     r = sheet.getRow(ref.getRow());
                     if (r != null) {
                        Cell c = r.getCell(ref.getCol());
+                       processFollower = "VAR: "+ row[0]+" REF: "+row[1] +" o "+ row[2];
                        if(c.getNumericCellValue()!=0){
                         gradeR[1]=""+c.getNumericCellValue();
                        }else{
@@ -166,6 +176,24 @@ public class ExcelReader {
             }catch(Exception e){
                 builder.append("NO SE GENERO ARCHIVO - DATOS INCOMPLETOS: ").append(name);
                 builder.append("\n");
+                switch (error_follower) {
+                    case 0:
+                        builder.append("UNA CELDA DE LA COLUMNA DE FECHAS NO TIENE EL FORMATO CORRECTO O SE ENCUENTRA VACIA\n");
+                        builder.append("ERROR CERCA DE: "+processFollower+"\n");
+                        break;
+                    case 1:
+                        builder.append("UNA CELDA DE LA COLUMNA DE TIPO DE EXAMEN NO TIENE EL FORMATO CORRECTO O SE ENCUENTRA VACIA\n");
+                        builder.append("ERROR CERCA DE: "+processFollower+"\n");
+                        break;
+                    case 2:
+                        builder.append("UNA CELDA DE LA COLUMNA DE CALIFICACIONES NO TIENE EL FORMATO CORRECTO O SE ENCUENTRA VACIA\n");
+                        builder.append("ERROR CERCA DE: "+processFollower+"\n");
+                        break;
+                    default:
+                        break;
+                }
+                        
+                e.printStackTrace();
             }
             }else{
             builder.append("SIN NOMBRE DE HOJA");

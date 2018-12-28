@@ -27,7 +27,7 @@ public class CRTSYSTEM11 {
             List<String[]> examsChangeData,
             List<String[]> gradesChangeData) throws IOException, DocumentException 
     {
-        String SRC = "C:\\CRTSYS\\INPUT\\PLAN_LE_2012.pdf";
+        String SRC = "C:\\CRTSYS\\INPUT\\"+MatchData.ACTUAL_PLAN+".pdf";
         String DEST = "C:\\CRTSYS\\OUTPUT\\"+pdfAndStudentName.trim()+".pdf";
         File file = new File(DEST);
         file.getParentFile().mkdirs();

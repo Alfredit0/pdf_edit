@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -82,7 +83,7 @@ public class Main extends javax.swing.JFrame
             btnGenerateFiles.setEnabled(true);
             setCursor(null); //turn off the wait cursor
             txtProcessResult.append(pdfGenerator.getResult());
-            ImageIcon loadingImg = new ImageIcon("Completed_icon.gif");
+            ImageIcon loadingImg = new ImageIcon("images/Completed_icon.gif");
             lblStatus.setIcon(loadingImg);
             enableMainControls();
         }
@@ -92,11 +93,17 @@ public class Main extends javax.swing.JFrame
      */
     public Main() {
         initComponents();
-        for(String[] row: MatchData.getUNIVERSITY_PLANS()){
-        comboPlan.addItem(row[0]);
-        }
+        loadComboPlan();
     }
-
+    public void loadComboPlan(){          
+        if(comboPlan.getItemCount()>1){   
+            for (int i=1;i<=comboPlan.getItemCount()+1;i++)
+                comboPlan.removeItemAt(1);                      
+        }        
+        MatchData.getUNIVERSITY_PLANS().stream().forEach((row) -> {
+            comboPlan.addItem(row[0]);
+        });             
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -126,10 +133,13 @@ public class Main extends javax.swing.JFrame
         txtProcessResult = new javax.swing.JTextArea();
         lblFolioNumberReq = new javax.swing.JLabel();
         txtFolioNumber = new javax.swing.JFormattedTextField();
+        btnRefreshPlans = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GENERADOR DE CERTIFICADOS - UNSIS");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setForeground(java.awt.Color.white);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 0, 0)));
@@ -204,6 +214,13 @@ public class Main extends javax.swing.JFrame
             }
         });
 
+        btnRefreshPlans.setText("R");
+        btnRefreshPlans.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshPlansActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -214,8 +231,11 @@ public class Main extends javax.swing.JFrame
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(comboPlan, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(48, 48, 48)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(comboPlan, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRefreshPlans, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -240,7 +260,7 @@ public class Main extends javax.swing.JFrame
                                 .addGap(13, 13, 13))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(81, 81, 81)
                                 .addComponent(lblPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,8 +290,10 @@ public class Main extends javax.swing.JFrame
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(btnOpenFile)
                                 .addComponent(lblPath))))
-                    .addComponent(comboPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(comboPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRefreshPlans, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(7, 7, 7)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel5))
@@ -346,6 +368,7 @@ public class Main extends javax.swing.JFrame
         btnGenerateFiles.setEnabled(false);
         txtFolioNumber.setEnabled(false);
         jDateChooser1.setEnabled(false);
+        btnGenerateFiles.setEnabled(false);
     }
     public void enableMainControls(){
         comboPlan.setEnabled(true);
@@ -353,6 +376,7 @@ public class Main extends javax.swing.JFrame
         btnGenerateFiles.setEnabled(true);    
         txtFolioNumber.setEnabled(true);
         jDateChooser1.setEnabled(true);
+        btnGenerateFiles.setEnabled(true);
     }
     private void comboPlanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPlanActionPerformed
        BufferedImage img;
@@ -390,7 +414,7 @@ public class Main extends javax.swing.JFrame
 
     private void btnGenerateFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateFilesActionPerformed
             txtProcessResult.setText("");
-            ImageIcon loadingImg = new ImageIcon("Loading_icon.gif");
+            ImageIcon loadingImg = new ImageIcon("images/Loading_icon.gif");
             lblStatus.setIcon(loadingImg); 
             btnGenerateFiles.setEnabled(false);
             SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
@@ -432,6 +456,10 @@ public class Main extends javax.swing.JFrame
     private void txtFolioNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFolioNumberFocusLost
         setFolioNumber(Integer.parseInt(txtFolioNumber.getText()));        
     }//GEN-LAST:event_txtFolioNumberFocusLost
+
+    private void btnRefreshPlansActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshPlansActionPerformed
+        loadComboPlan();
+    }//GEN-LAST:event_btnRefreshPlansActionPerformed
     /**
      * Invoked when task's progress property changes.
      */
@@ -531,6 +559,7 @@ public class Main extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGenerateFiles;
     private javax.swing.JButton btnOpenFile;
+    private javax.swing.JButton btnRefreshPlans;
     private javax.swing.JComboBox<String> comboPlan;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
