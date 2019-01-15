@@ -255,11 +255,11 @@ public final class MatchData {
         
                 GRADES_MATCH_DATA = new ArrayList<String[]>();
                 
-                DATES_MATCH_DATA = CsvFileReader.getCsvContent("/CRTSYS/CONFIG/DATES_"+ACTUAL_PLAN+".csv");
+                DATES_MATCH_DATA = CsvFileReader.getCsvContent("/CRTSYS/CONFIG/"+ACTUAL_PLAN+"/DATES_"+ACTUAL_PLAN+".csv");
                 
-                EXAMS_MATCH_DATA = CsvFileReader.getCsvContent("/CRTSYS/CONFIG/EXAMS_"+ACTUAL_PLAN+".csv");
+                EXAMS_MATCH_DATA = CsvFileReader.getCsvContent("/CRTSYS/CONFIG/"+ACTUAL_PLAN+"/EXAMS_"+ACTUAL_PLAN+".csv");
                 
-                GRADES_MATCH_DATA= CsvFileReader.getCsvContent("/CRTSYS/CONFIG/GRADES_"+ACTUAL_PLAN+".csv");
+                GRADES_MATCH_DATA= CsvFileReader.getCsvContent("/CRTSYS/CONFIG/"+ACTUAL_PLAN+"/GRADES_"+ACTUAL_PLAN+".csv");
                 
                 if(DATES_MATCH_DATA.isEmpty()||EXAMS_MATCH_DATA.isEmpty()||GRADES_MATCH_DATA.isEmpty())
                     return false;
